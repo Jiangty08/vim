@@ -6,9 +6,86 @@
 "       1.0 - 30/08/16 15:43:36
 "
 " Sections:
-"    -> Plugin config basic
+"    -> Vundle Plugin
 "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+""""""""""""""""""""""""""""""
+" => Vundle Plugin
+""""""""""""""""""""""""""""""
+set nocompatible              " be iMproved, required
+filetype off                  " required
+
+" set the runtime path to include Vundle and initialize
+set rtp+=~/.vim_runtime/bundle/Vundle.vim
+" call vundle#begin()
+" alternatively, pass a path where Vundle should install plugins
+call vundle#begin('~/.vim_runtime/bundle')
+
+" let Vundle manage Vundle, required
+Plugin 'VundleVim/Vundle.vim'
+
+" search file
+Plugin 'kien/ctrlp.vim'
+" search functions in file
+Plugin 'tacahiroy/ctrlp-funky'
+
+" search text
+
+" align text
+Plugin 'godlygeek/tabular'
+
+" preview markdown
+Plugin 'suan/vim-instant-markdown'
+
+" display dir menu
+Plugin 'The-NERD-tree'
+"Plugin 'cscope.vim'       cscope_macros.vim is better for csadd
+Plugin 'cscope_macros.vim'
+Plugin 'majutsushi/tagbar'
+
+Plugin 'Auto-Pairs'
+" Plugin 'Valloric/YouCompleteMe'
+" Track the engine.
+Plugin 'SirVer/ultisnips'
+
+" Snippets are separated from the engine. Add this if you want them:
+Plugin 'honza/vim-snippets'
+
+" edit
+Plugin 'tpope/vim-surround'
+Plugin 'scrooloose/nerdcommenter'
+
+" for switch zh en input methods
+Plugin 'fcitx.vim'
+
+" status line
+Plugin 'vim-airline/vim-airline'
+
+" a git wrapper for vim
+Plugin 'tpope/vim-fugitive'
+
+" library for other plugins
+Plugin 'L9'
+
+" formatting
+Plugin 'tell-k/vim-autopep8'
+
+" colortheme
+Plugin 'tomasr/molokai'
+
+"Plugin 'easymotion/vim-easymotion'
+"
+Plugin 'davidhalter/jedi-vim'
+
+" Plugin 'python-mode/python-mode'
+
+" All of your Plugins must be added before the following line
+call vundle#end()            " required
+filetype plugin indent on    " required
+" see :h vundle for more details or wiki for FAQ
+" Put your non-Plugin stuff after this line
+
 """"""""""""""""""""""""""""""
 " => CTRL-P
 """"""""""""""""""""""""""""""
@@ -17,8 +94,6 @@
 let g:ctrlp_working_path_mode = 0
 
 "let g:ctrlp_map = '<c-f>'
-"设定默认打开Most-Recently-Used filemode
-let g:ctrlp_cmd='CtrlPMRU'
 
 let g:ctrlp_max_depth = 10
 let g:ctrlp_max_files=0
@@ -39,6 +114,7 @@ let g:ctrlp_custom_ignore = 'node_modules\|^\.DS_Store\|^\.git\|^\.coffee'
 nnoremap <Leader>fu :CtrlPFunky<Cr>
 " search the function list with a word under cursor
 nnoremap <Leader>fU :execute 'CtrlPFunky ' . expand('<cword>')<Cr>
+
 
 """"""""""""""""""""""""""""""
 " => Vim grep
@@ -70,6 +146,35 @@ let g:tagbar_right = 1
 let g:tagbar_width = 45
 "autocmd VimEnter * nested :call tagbar#autoopen(1)
 autocmd BufReadPost *.cpp,*.c,*.h,*.hpp,*.cc,*.cxx call tagbar#autoopen()
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => vim-multiple-cursors
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:multi_cursor_next_key="\<C-s>"
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Syntastic (syntax checker)
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Python
+let g:syntastic_python_checkers=['pyflakes']
+
+" Javascript
+let g:syntastic_javascript_checkers = ['jshint']
+
+" Go
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_go_checkers = ['go', 'golint', 'errcheck']
+
+" Custom CoffeeScript SyntasticCheck
+func! SyntasticCheckCoffeescript()
+	let l:filename = substitute(expand("%:p"), '\(\w\+\)\.coffee', '.coffee.\1.js', '')
+	execute "tabedit " . l:filename
+	execute "SyntasticCheck"
+	execute "Errors"
+endfunc
+nnoremap <silent> <leader>c :call SyntasticCheckCoffeescript()<cr>
+
+
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => cscope(show calls and defines)
@@ -117,11 +222,31 @@ endfunction
 "this is not work, but cscope.vim will auto create and connect cscope
 nmap <F7> :call AutoLoadCTagsAndCScope()<CR>
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => YCM(YouCompleteMe: auto complete)
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:ycm_global_ycm_extra_conf = '~/.vim_runtime/bundle/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py'
+let g:ycm_collect_identifiers_from_tags_files = 1
+let g:ycm_seed_identifiers_with_syntax = 1
+let g:ycm_confirm_extra_conf = 0
+"let g:ycm_show_diagnostics_ui = 0
+
+" for python
+let g:ycm_autoclose_preview_window_after_completion=1
+map <leader>g  :YcmCompleter GoToDefinitionElseDeclaration<CR>
+let g:ycm_python_binary_path = '/usr/bin/python3'
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => vim-multiple-cursors
+" => UltiSnips
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"let g:multi_cursor_use_default_mapping=1
+" Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
+let g:UltiSnipsExpandTrigger="<Leader><tab>"
+let g:UltiSnipsJumpForwardTrigger="<c-b>"
+let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+
+" If you want :UltiSnipsEdit to split your window.
+let g:UltiSnipsEditSplit="vertical"
+let g:UltiSnipsSnippetDirectories = ['~/.vim_runtime/ultisnips-snippets']
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => nerdcommenter
@@ -130,9 +255,7 @@ nmap <F7> :call AutoLoadCTagsAndCScope()<CR>
 
 " default mappings
 " [count]<leader>c<space> |NERDComToggleComment|
-" 妈蛋的，不把下面第一句写了，第二句还不能生效
-map <leader>c<space> <plug>NERDCommenterComment
-map <Leader>cc <plug>NERDCommenterToggle
+
 " Add spaces after comment delimiters by default
 let g:NERDSpaceDelims = 1
 
@@ -152,12 +275,13 @@ let g:NERDCustomDelimiters = { 'c': { 'left': '/**','right': '*/' } }
 let g:NERDCommentEmptyLines = 1
 
 " Enable trimming of trailing whitespace when uncommenting
-let g:NERDTrimTrailingWhitespace = 0
+let g:NERDTrimTrailingWhitespace = 1
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => vim-autopep8
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 autocmd FileType python noremap <buffer> <F8> :call Autopep8()<CR>
+
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => colorscheme
@@ -167,24 +291,9 @@ try
 catch
 endtry
 
+
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => jedi-vim
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"let g:jedi#completions_command = "<tab>"
-let g:jedi#usages_command = "<leader>f"
-" supertab默认选择的时候反向了，所以这里加如下配置
-let g:SuperTabMappingForward = '<s-tab>'
-let g:SuperTabMappingBackward = '<tab>'
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => 多彩显示括号，层次更清晰
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-au VimEnter * RainbowParenthesesToggle
-au Syntax * RainbowParenthesesLoadRound
-au Syntax * RainbowParenthesesLoadSquare
-au Syntax * RainbowParenthesesLoadBraces
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => gundo 显示undo tree
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-nnoremap <F5> :GundoToggle<CR>
+let g:jedi#completions_command = "<leader>j"
